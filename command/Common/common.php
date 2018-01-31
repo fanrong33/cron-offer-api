@@ -146,8 +146,6 @@ function update_offer_api2($new_price, $new_cvn_cap, $offer_api, $thirdparty_off
         'is_actived' => $offer_api['is_actived'],
     );
     if(http_build_query($api_data) != http_build_query($offer_api_data)){
-        var_dump($api_data);
-        var_dump($offer_api_data);
         
         echo sprintf("  存在变化，开始进行更新OfferApi \n");
 
@@ -356,7 +354,7 @@ function pause_offer2($api_offerid_list, $network_id, $aff_id, $mysql, $ssdb){
 
     $ids  = join(',', $api_offerid_list);
     // 1、获取本地已导入的offer id
-    $sql = "select thirdparty_offer_id,network_id from t_offer where network_id={$network_id} and aff_id='{$aff_id}' and `thirdparty_offer_id` not in({$ids}) and is_deleted=0 and is_locked=0"; // 锁住的就不要管了，好吧
+    $sql = "select thirdparty_offer_id,network_id from t_offer where network_id={$network_id} and aff_id='{$aff_id}' and `thirdparty_offer_id` not in({$ids}) and is_deleted=0 and is_locked=0 and is_actived=1"; // 锁住的就不要管了，好吧
     $unreturn_list = $mysql->executeSQL($sql);
 
     if(is_array($unreturn_list)){
@@ -365,7 +363,7 @@ function pause_offer2($api_offerid_list, $network_id, $aff_id, $mysql, $ssdb){
         }
 
         $time = time();
-        $sql = "update `t_offer` set `is_actived`=0, `update_time`={$time} where network_id={$network_id} and aff_id='{$aff_id}' and `thirdparty_offer_id` not in({$ids}) and is_deleted=0 and is_locked=0";
+        $sql = "update `t_offer` set `is_actived`=0, `update_time`={$time} where network_id={$network_id} and aff_id='{$aff_id}' and `thirdparty_offer_id` not in({$ids}) and is_deleted=0 and is_locked=0 and is_actived=1";
         $effect = $mysql->executeSQL($sql);
 
         if($effect){
